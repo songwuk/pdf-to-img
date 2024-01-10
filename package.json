@@ -1,0 +1,18 @@
+{
+  "name": "pdf-to-img",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite  --port 44444 --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.0.379",
+    "vite-plugin-top-level-await": "^1.4.1"
+  }
+}

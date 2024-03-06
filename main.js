@@ -1,27 +1,62 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
 import pdfLogo from '/pdf.svg'
 import * as pdfjs from 'pdfjs-dist'
 const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.min.mjs');
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker
 document.querySelector('#app').innerHTML = `
-  <div style="display: flex">
+  <div class="bodyClass">
     <div style="display: flex;align-items: center;">
-      <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
+      <a href="/" target="_blank">
         <img src="${pdfLogo}" class="logo vanilla" alt="JavaScript logo" />
       </a>
       <div>
-        <input id="upload" type="file">
+        <button id="fileButton">choose </button>
+        <input style="display:none" id="upload" type="file">
       </div>
     </div>
-    <div id='imgDiv'></div>
+    <div>
+      <div>大小: <span class='mline'></span></div>
+      <div id='imgDiv'></div>
+    </div>
   </div>
 `
-// <canvas id="theCanvas"></canvas>
+document.querySelector('#fileButton').addEventListener('click', function(){
+  const fileId = document.querySelector('#upload')
+  if(fileId) {
+    fileId.click()
+  }
+},true)
+/**
+ * 初始化水印元素
+ */
+function initWatermark() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 200;
+  canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+  ctx.rotate((45 * Math.PI) / 180);
+  ctx.font = '15px Verdana';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.fillText('我是水印', 30, 30);
+  return canvas;
+}
+/**
+ * 在画布上添加水印
+ * @param num 画布索引
+ */
+function addWatermark(num, width, height) {
+  const canvas =  document.getElementById(num);
+  const ctx = canvas.getContext('2d');
+  const pattern = ctx.createPattern(initWatermark(), 'repeat');
+  ctx.rect(0, 0, width, height);
+  ctx.fillStyle = pattern;
+  ctx.fill();
+}
 const file = document.querySelector('#upload')
 file.addEventListener('change', function(){
   const fileEle = document.querySelector('#upload').files
+  const lastNum = fileEle[0].size * Math.pow(10, -6)
+  document.querySelector('.mline').textContent = lastNum.toFixed(2) +'MB'
   var reader = new FileReader();
   reader.readAsArrayBuffer(fileEle[0]);
   reader.onload = async function(e) {
@@ -50,6 +85,7 @@ async function renderPage (pdfDocument) {
       viewport,
     });
     await renderTask.promise;
+    await addWatermark( "pageNum" + index, canvas.width, canvas.height)
     const img = canvas.toDataURL("image/png", 1.0);
     const canvasImg = document.createElement('img')
     canvasImg.src = img

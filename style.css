@@ -36,6 +36,7 @@ h1 {
 }
 
 #app {
+  width: 1280px;
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -93,4 +94,13 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+.bodyClass{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#imgDiv img {
+  margin: 5px;
 }
